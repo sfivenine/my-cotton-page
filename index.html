@@ -28,7 +28,7 @@
       pointer-events: none;
       -webkit-user-drag: none;
     }
-    /* 核心修复：添加.page1的.click-area样式，让点击区域覆盖整个page1 */
+    /* page1点击区域样式 */
     #page1 .click-area {
       position: absolute;
       top: 0;
@@ -38,7 +38,7 @@
       background-color: transparent;
       cursor: pointer;
       z-index: 10;
-      pointer-events: auto; /* 确保可响应触摸/点击 */
+      pointer-events: auto;
     }
     /* 原有点击区域样式保留 */
     .page2-coupon-click, .page3-notice-area, .page5-click-area {
@@ -164,33 +164,43 @@
       font-size: 16px;
       width: 100%;
     }
+    /* 核心优化：条码容器统一宽高比和居中，作为日期定位基准 */
     .barcode-page {
       position: relative;
+      width: 100%;
+      max-width: 600px; /* 限制电脑端最大宽度，避免过大 */
+      margin: 0 auto; /* 水平居中，手机/电脑一致 */
+      aspect-ratio: 5 / 3; /* 固定条码容器宽高比（匹配图片比例，可按需调整） */
     }
+    .barcode-page img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* 保持图片比例，不拉伸变形 */
+    }
+    /* 日期样式：固定大小+基于条码容器定位，手机/电脑一致 */
     .time-display {
       position: absolute;
-      top: calc(100% * 2.4 / 3); 
-      left: calc(100% * 0.75 / 5); 
-      font-size: 7vw; 
+      top: 84%; /* 基于条码容器高度定位（视觉对齐，可微调） */
+      left: -12%; /* 基于条码容器宽度定位（左右偏移，可微调） */
+      font-size: 16px; /* 固定字体大小，手机/电脑完全一致 */
       color: #888;
       background-color: transparent;
       z-index: 10;
       transform: rotate(-90deg);
-      transform-origin: top left;
+      transform-origin: left center; /* 优化旋转原点，避免偏移 */
       letter-spacing: 2px;
-      font-weight: 600; 
+      font-weight: 350;
       white-space: nowrap;
       pointer-events: none;
     }
     .time-display .separator {
       display: inline-block;
-      width: 10vw; 
-      max-width: 80px;
+      width: 40px; /* 固定间隔宽度，避免适配差异 */
     }
     .time-display .countdown-part {
-      color: #667380; 
-      font-weight: 600; 
-      font-size: 1.0em; 
+      color: #667380;
+      font-weight: 400;
+      font-size: 0.9em; /* 相对父元素比例，保持层级一致 */
     }
     .time-display .expired {
       color: #ff0000;
@@ -225,15 +235,15 @@
       z-index: 10;
     }
 
+    /* 手机端仅微调偏移，不改变核心样式 */
     @media (max-width: 768px) {
       .time-display {
-        font-size: 3.5vw; 
-        top: calc(100% * 2.6 / 3); 
-        left: calc(100% * 0.5 / 5); 
+        top: 85%; /* 手机端微调垂直位置，确保视觉对齐 */
+        left: -14%; /* 手机端微调水平位置，确保视觉对齐 */
+        font-size: 16px; /* 保持字体大小不变 */
       }
       .time-display .separator {
-        width: 8vw; 
-        max-width: 50px;
+        width: 40px; /* 保持间隔宽度不变 */
       }
     }
   </style>
@@ -244,7 +254,6 @@
       src="https://raw.githubusercontent.com/sfivenine/my-cotton-page/main/page.png" 
       alt="优惠券列表" 
     >
-    <!-- 点击区域已绑定事件，只需补充CSS样式即可触发 -->
     <div class="click-area" onclick="switchPage('page1', 'page2')"></div>
   </div>
 
