@@ -64,6 +64,12 @@
       z-index: 10;
       pointer-events: auto;
     }
+    /* 为page6的图片添加铺满样式 */
+    #page6 img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     /* 原有点击区域样式保留 */
     .page2-coupon-click, .page3-notice-area, .page5-click-area {
       pointer-events: auto;
@@ -481,53 +487,4 @@
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const day = String(now.getDate()).padStart(2, '0');
-      const dateStr = `${year}/${month}/${day}`;
-
-      const minutes = String(Math.floor(remainingSeconds / 60)).padStart(2, '0');
-      const seconds = String(remainingSeconds % 60).padStart(2, '0');
-      const countdownStr = `${minutes}:${seconds}`;
-
-      document.getElementById('timeDisplay').innerHTML = 
-        `${dateStr}<span class="separator"></span><span class="countdown-part">${countdownStr}</span>`;
-    }
-
-    function openCouponModal() {
-      document.getElementById('couponModal').style.display = 'flex';
-    }
-
-    function closeCouponModal() {
-      document.getElementById('couponModal').style.display = 'none';
-    }
-
-    function showNoticeModal() {
-      closeCouponModal();
-      document.getElementById('noticeModal').style.display = 'flex';
-    }
-
-    function closeNoticeModal() {
-      document.getElementById('noticeModal').style.display = 'none';
-    }
-
-    function useCoupon() {
-      closeNoticeModal();
-      switchPage('page2', 'page4');
-    }
-
-    // 数量增减按钮的事件绑定
-    const couponCountEl = document.getElementById('couponCount');
-    document.getElementById('decrease').addEventListener('click', () => {
-      let count = parseInt(couponCountEl.textContent);
-      if (count > 1) {
-        couponCountEl.textContent = count - 1;
-      }
-    });
-    document.getElementById('increase').addEventListener('click', () => {
-      let count = parseInt(couponCountEl.textContent);
-      if (count < 9) {
-        couponCountEl.textContent = count + 1;
-      }
-    });
-  </script>
-</body>
-</html>
-    
+      const dateStr = `${year}/${month
