@@ -40,16 +40,16 @@
       z-index: 10;
       pointer-events: auto;
     }
-    /* 新增：page4右1/3点击区域（精准定位） */
+    /* page4右1/3点击区域 */
     #page4 .right-third-click {
       position: absolute;
       top: 0;
-      right: 0; /* 从右侧开始 */
-      width: 33.33%; /* 宽度占页面1/3 */
-      height: 100%; /* 高度占满页面，确保任意垂直位置点击都有效 */
-      background-color: transparent; /* 透明不影响视觉 */
+      right: 0;
+      width: 33.33%;
+      height: 100%;
+      background-color: transparent;
       cursor: pointer;
-      z-index: 10; /* 层级高于日期，确保点击优先触发 */
+      z-index: 10;
       pointer-events: auto;
     }
     /* 原有点击区域样式保留 */
@@ -353,7 +353,6 @@
   </div>
 
   <div class="page" id="page4">
-    <!-- 新增：page4右1/3点击区域，绑定跳转page1事件 -->
     <div class="right-third-click" onclick="switchPage('page4', 'page1')"></div>
     <div class="barcode-page">
       <img 
@@ -402,7 +401,7 @@
       document.getElementById(fromPageId).classList.remove('active');
       document.getElementById(toPageId).classList.add('active');
       
-      // 跳转回page1时，清除倒计时（避免后台继续运行）
+      // 跳转回page1时，清除倒计时
       if (toPageId === 'page1' && countdownInterval) {
         clearInterval(countdownInterval);
         countdownInterval = null;
@@ -476,6 +475,7 @@
       switchPage('page2', 'page4');
     }
 
+    // 修复数量增减按钮的事件绑定代码
     const couponCountEl = document.getElementById('couponCount');
     document.getElementById('decrease').addEventListener('click', () => {
       let count = parseInt(couponCountEl.textContent);
@@ -483,4 +483,12 @@
         couponCountEl.textContent = count - 1;
       }
     });
-    document.getElementById('increase').addEventListener('click',
+    document.getElementById('increase').addEventListener('click', () => {
+      let count = parseInt(couponCountEl.textContent);
+      if (count < 9) {
+        couponCountEl.textContent = count + 1;
+      }
+    });
+  </script>
+</body>
+</html>
