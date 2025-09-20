@@ -52,6 +52,18 @@
       z-index: 10;
       pointer-events: auto;
     }
+    /* page6点击区域 */
+    #page6 .click-area {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+      cursor: pointer;
+      z-index: 10;
+      pointer-events: auto;
+    }
     /* 原有点击区域样式保留 */
     .page2-coupon-click, .page3-notice-area, .page5-click-area {
       pointer-events: auto;
@@ -207,12 +219,12 @@
     .time-display .expired {
       color: #ff0000;
     }
-    #page3, #page5 {
+    #page3, #page5, #page6 {
       text-align: center;
       padding: 20px 0;
       position: relative;
     }
-    #page3 img, #page5 img {
+    #page3 img, #page5 img, #page6 img {
       max-width: 90%;
       margin: 0 auto;
     }
@@ -353,7 +365,7 @@
   </div>
 
   <div class="page" id="page4">
-    <div class="right-third-click" onclick="switchPage('page4', 'page1')"></div>
+    <div class="right-third-click" onclick="handlePage4RightClick()"></div>
     <div class="barcode-page">
       <img 
         src="https://raw.githubusercontent.com/sfivenine/my-cotton-page/main/page4.png" 
@@ -361,6 +373,15 @@
       >
       <div class="time-display" id="timeDisplay"></div>
     </div>
+  </div>
+
+  <!-- 新增page6页面 -->
+  <div class="page" id="page6">
+    <img 
+      src="https://raw.githubusercontent.com/sfivenine/my-cotton-page/main/page6.png" 
+      alt="优惠券使用完毕页面"
+    >
+    <div class="click-area" onclick="switchPage('page6', 'page1')"></div>
   </div>
 
   <div class="modal" id="couponModal">
@@ -395,7 +416,8 @@
 
   <script>
     let countdownInterval; 
-    const TOTAL_SECONDS = 10 * 60; 
+    const TOTAL_SECONDS = 10 * 60;
+    let isCountdownExpired = false; // 标记倒计时是否已结束
 
     function switchPage(fromPageId, toPageId) {
       document.getElementById(fromPageId).classList.remove('active');
@@ -405,6 +427,7 @@
       if (toPageId === 'page1' && countdownInterval) {
         clearInterval(countdownInterval);
         countdownInterval = null;
+        isCountdownExpired = false; // 重置倒计时状态
       }
       
       if (toPageId === 'page4') {
@@ -415,8 +438,20 @@
       }
     }
 
+    // 处理page4右侧1/3区域的点击事件
+    function handlePage4RightClick() {
+      if (isCountdownExpired) {
+        // 倒计时已结束，直接跳转page1
+        switchPage('page4', 'page1');
+      } else {
+        // 倒计时未结束，跳转page6
+        switchPage('page4', 'page6');
+      }
+    }
+
     function startCountdown() {
       let remainingSeconds = TOTAL_SECONDS;
+      isCountdownExpired = false; // 重置倒计时状态
       
       if (countdownInterval) {
         clearInterval(countdownInterval);
@@ -431,9 +466,12 @@
         if (remainingSeconds <= 0) {
           clearInterval(countdownInterval);
           countdownInterval = null;
+          isCountdownExpired = true; // 标记倒计时已结束
           const countdownEl = document.querySelector('.countdown-part');
           if (countdownEl) countdownEl.classList.add('expired');
           alert('优惠券已过期，无法继续使用！');
+          // 倒计时结束后自动跳转page1
+          switchPage('page4', 'page1');
         }
       }, 1000);
     }
@@ -475,7 +513,7 @@
       switchPage('page2', 'page4');
     }
 
-    // 修复数量增减按钮的事件绑定代码
+    // 数量增减按钮的事件绑定
     const couponCountEl = document.getElementById('couponCount');
     document.getElementById('decrease').addEventListener('click', () => {
       let count = parseInt(couponCountEl.textContent);
@@ -492,3 +530,4 @@
   </script>
 </body>
 </html>
+    
