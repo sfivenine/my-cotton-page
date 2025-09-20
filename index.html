@@ -28,7 +28,7 @@
       pointer-events: none;
       -webkit-user-drag: none;
     }
-    /* 核心修复：添加.page1的.click-area样式，让点击区域覆盖整个page1 */
+    /* page1点击区域样式 */
     #page1 .click-area {
       position: absolute;
       top: 0;
@@ -38,7 +38,19 @@
       background-color: transparent;
       cursor: pointer;
       z-index: 10;
-      pointer-events: auto; /* 确保可响应触摸/点击 */
+      pointer-events: auto;
+    }
+    /* 新增：page4右1/3点击区域（精准定位） */
+    #page4 .right-third-click {
+      position: absolute;
+      top: 0;
+      right: 0; /* 从右侧开始 */
+      width: 33.33%; /* 宽度占页面1/3 */
+      height: 100%; /* 高度占满页面，确保任意垂直位置点击都有效 */
+      background-color: transparent; /* 透明不影响视觉 */
+      cursor: pointer;
+      z-index: 10; /* 层级高于日期，确保点击优先触发 */
+      pointer-events: auto;
     }
     /* 原有点击区域样式保留 */
     .page2-coupon-click, .page3-notice-area, .page5-click-area {
@@ -244,7 +256,6 @@
       src="https://raw.githubusercontent.com/sfivenine/my-cotton-page/main/page.jpg" 
       alt="优惠券列表" 
     >
-    <!-- 点击区域已绑定事件，只需补充CSS样式即可触发 -->
     <div class="click-area" onclick="switchPage('page1', 'page2')"></div>
   </div>
 
@@ -276,6 +287,8 @@
   </div>
 
   <div class="page" id="page4">
+    <!-- 新增：page4右1/3点击区域，绑定跳转page1事件 -->
+    <div class="right-third-click" onclick="switchPage('page4', 'page1')"></div>
     <div class="barcode-page">
       <img 
         src="https://raw.githubusercontent.com/sfivenine/my-cotton-page/main/page4.jpg" 
@@ -306,13 +319,17 @@
       document.getElementById(fromPageId).classList.remove('active');
       document.getElementById(toPageId).classList.add('active');
       
+      // 跳转回page1时，清除倒计时（避免后台继续运行）
+      if (toPageId === 'page1' && countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+      }
+      
       if (toPageId === 'page4') {
         startCountdown();
-      } else {
-        if (countdownInterval) {
-          clearInterval(countdownInterval);
-          countdownInterval = null;
-        }
+      } else if (toPageId !== 'page1' && countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
       }
     }
 
