@@ -53,7 +53,7 @@
       pointer-events: auto;
     }
     /* 原有点击区域样式保留 */
-    .page2-coupon-click, .page3-notice-area, .page5-click-area, #page6 .click-area {
+    .page2-coupon-click, .page3-notice-area, .page5-click-area, #page6 .click-area, #page7 .click-area {
       pointer-events: auto;
     }
     .btn-area {
@@ -179,18 +179,15 @@
     .barcode-page {
       position: relative;
     }
+    /* 通用时间样式：仅保留所有页面共用属性，避免与高优先级样式冲突 */
     .time-display {
       position: absolute;
-      top: calc(100% * 2.55 / 3); 
-      left: calc(100% * 0.75 / 5); 
-      font-size: 6vw; 
       color: #888;
       background-color: transparent;
       z-index: 10;
       transform: rotate(-90deg);
       transform-origin: top left;
       letter-spacing: 2px;
-      font-weight: 500; 
       white-space: nowrap;
       pointer-events: none;
     }
@@ -207,12 +204,12 @@
     .time-display .expired {
       color: #ff0000;
     }
-    #page3, #page5, #page6 {
+    #page3, #page5, #page6, #page7 {
       text-align: center;
       padding: 20px 0;
       position: relative;
     }
-    #page3 img, #page5 img, #page6 img {
+    #page3 img, #page5 img, #page6 img, #page7 img {
       max-width: 100%;
       margin: 0 auto;
     }
@@ -237,7 +234,7 @@
       z-index: 10;
     }
     /* page6点击区域 */
-    #page6 .click-area {
+    #page6 .click-area, #page7 .click-area {
       position: absolute;
       top: 0;
       left: 0;
@@ -247,28 +244,20 @@
       cursor: pointer;
       z-index: 10;
     }
-    /* 统一page4和page6的时间显示样式 */
-    #page4 .time-display, #page6 .time-display {
-      position: absolute;
-      top: calc(100% * 2.55 / 3); 
-      left: calc(100% * 0.73 / 5); 
-      font-size: 5.5vw; 
-      color: #888;
-      background-color: transparent;
-      z-index: 10;
-      transform: rotate(-90deg);
-      transform-origin: top left;
-      letter-spacing: 2px;
-      font-weight: 400; 
-      white-space: nowrap;
-      pointer-events: none;
+    /* 高优先级样式：page4/page6/page7 时间元素专用（修改这里的数值会直接生效！） */
+    #page4 .time-display, #page6 .time-display, #page7 .time-display {
+      top: calc(100% * 2.53 / 3);  /* 已改为你需要的 2.53/3 */
+      left: calc(100% * 0.71 / 5);  /* 已改为你需要的 0.73/5 */
+      font-size: 5.5vw;             /* 已改为你需要的 5.5vw */
+      font-weight: 350; 
     }
 
+    /* 移动端适配：同步更新高优先级样式的移动端表现 */
     @media (max-width: 768px) {
-      .time-display {
+      #page4 .time-display, #page6 .time-display, #page7 .time-display {
         font-size: 3.5vw; 
-        top: calc(100% * 2.62 / 3); 
-        left: calc(100% * 0.52 / 5); 
+        top: calc(100% * 2.6 / 3); 
+        left: calc(100% * 0.5 / 5); 
       }
       .time-display .separator {
         width: 8vw; 
@@ -314,7 +303,7 @@
   </div>
 
   <div class="page" id="page4">
-    <!-- 右侧1/3点击区域，直接跳转page6 -->
+    <!-- 右侧1/3点击区域，跳转page6 -->
     <div class="right-third-click" onclick="switchPage('page4', 'page6')"></div>
     <div class="barcode-page">
       <img 
@@ -325,7 +314,6 @@
     </div>
   </div>
 
-  <!-- 新增page6页面 -->
   <div class="page" id="page6">
     <img 
       src="https://raw.githubusercontent.com/sfivenine/my-cotton-page/main/page6.png" 
@@ -338,12 +326,11 @@
   <div class="page" id="page7">
     <img 
       src="https://raw.githubusercontent.com/sfivenine/my-cotton-page/main/page7.png" 
-      alt="优惠券使用完成页"
+      alt="优惠券最终页"
     >
     <div class="time-display" id="page7TimeDisplay"></div>
     <div class="click-area" onclick="switchPage('page7', 'page1')"></div>
   </div>
-
 
   <div class="modal" id="couponModal">
     <div class="modal-content">
@@ -363,15 +350,18 @@
     let remainingSeconds = 10 * 60; // 10分钟倒计时
     const TOTAL_SECONDS = remainingSeconds; 
 
+    // 页面切换函数：新增page7的倒计时触发
     function switchPage(fromPageId, toPageId) {
       document.getElementById(fromPageId).classList.remove('active');
       document.getElementById(toPageId).classList.add('active');
       
       if (toPageId === 'page4') {
-        startCountdown();
-      } else if (toPageId === 'page6') {
-        updatePage6Time();
+        startCountdown(); // page4启动倒计时
+      } else if (toPageId === 'page6' || toPageId === 'page7') {
+        updatePage6Time(); // 切换到page6更新
+        updatePage7Time(); // 切换到page7更新
       } else {
+        // 其他页面停止倒计时
         if (countdownInterval) {
           clearInterval(countdownInterval);
           countdownInterval = null;
@@ -379,6 +369,7 @@
       }
     }
 
+    // 启动倒计时：新增page7初始化
     function startCountdown() {
       remainingSeconds = TOTAL_SECONDS;
       
@@ -386,25 +377,30 @@
         clearInterval(countdownInterval);
       }
 
+      // 初始化所有页面倒计时
       updatePage4Time(remainingSeconds);
       updatePage6Time();
+      updatePage7Time();
 
+      // 实时更新倒计时
       countdownInterval = setInterval(() => {
         remainingSeconds--;
         updatePage4Time(remainingSeconds);
         updatePage6Time();
+        updatePage7Time();
 
+        // 倒计时结束：所有页面倒计时标红+跳转page7
         if (remainingSeconds <= 0) {
           clearInterval(countdownInterval);
           countdownInterval = null;
-          const countdownEl = document.querySelector('.countdown-part');
-          if (countdownEl) countdownEl.classList.add('expired');
-          // 倒计时结束自动跳转page6
+          const countdownEls = document.querySelectorAll('.countdown-part');
+          countdownEls.forEach(el => el.classList.add('expired'));
           switchPage('page4', 'page7');
         }
       }, 1000);
     }
 
+    // page4倒计时更新
     function updatePage4Time(seconds) {
       const now = new Date();
       const year = now.getFullYear();
@@ -420,6 +416,7 @@
         `${dateStr}<span class="separator"></span><span class="countdown-part">${countdownStr}</span>`;
     }
 
+    // page6倒计时更新
     function updatePage6Time() {
       const now = new Date();
       const year = now.getFullYear();
@@ -435,32 +432,17 @@
         `${dateStr}<span class="separator"></span><span class="countdown-part">${countdownStr}</span>`;
     }
 
-    function openCouponModal() {
-      document.getElementById('couponModal').style.display = 'flex';
-    }
+    // 新增page7倒计时更新
+    function updatePage7Time() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const dateStr = `${year}/${month}/${day}`;
 
-    function closeCouponModal() {
-      document.getElementById('couponModal').style.display = 'none';
-    }
+      const minutes = String(Math.floor(remainingSeconds / 60)).padStart(2, '0');
+      const secs = String(remainingSeconds % 60).padStart(2, '0');
+      const countdownStr = `${minutes}:${secs}`;
 
-    const couponCountEl = document.getElementById('couponCount');
-    document.getElementById('decrease').addEventListener('click', () => {
-      let count = parseInt(couponCountEl.textContent);
-      if (count > 1) {
-        couponCountEl.textContent = count - 1;
-      }
-    });
-    document.getElementById('increase').addEventListener('click', () => {
-      let count = parseInt(couponCountEl.textContent);
-      if (count < 9) {
-        couponCountEl.textContent = count + 1;
-      }
-    });
-
-    function confirmCoupon() {
-      closeCouponModal();
-      switchPage('page2', 'page5');
-    }
-  </script>
-</body>
-</html>
+      document.getElementById('page7TimeDisplay').innerHTML = 
+        `${dateStr}<span
