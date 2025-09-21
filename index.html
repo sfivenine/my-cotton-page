@@ -189,7 +189,7 @@
       z-index: 10;
       transform: rotate(-90deg);
       transform-origin: top left;
-      letter-spacing: 1px;
+      letter-spacing: 0px;
       font-weight: 500; 
       white-space: nowrap;
       pointer-events: none;
@@ -258,7 +258,7 @@
       z-index: 10;
       transform: rotate(-90deg);
       transform-origin: top left;
-      letter-spacing: 1px;
+      letter-spacing: 0px;
       font-weight: 400; 
       white-space: nowrap;
       pointer-events: none;
@@ -267,8 +267,9 @@
     @media (max-width: 768px) {
       .time-display {
         font-size: 4.5vw; 
-        top: calc(100% * 2.54 / 3); 
-        left: calc(100% * 0.68 / 5); 
+        top: calc(100% * 2.53 / 3); 
+        left: calc(100% * 0.67 / 5); 
+        letter-spacing: 0px;
       }
       .time-display .separator {
         width: 8vw; 
